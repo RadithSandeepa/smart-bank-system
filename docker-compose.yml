@@ -1,0 +1,153 @@
+version: "3.7"
+services:
+  zipkin:
+    container_name: zipkin
+    image: openzipkin/zipkin
+    extra_hosts: [ 'host.docker.internal:host-gateway' ]
+    ports:
+      - "9411:9411"
+    networks:
+      - banking_network
+  config-service:
+    image: banking/config-server:1.1-SNAPSHOT
+    ports:
+      - "8088:8088"
+    healthcheck:
+       test: curl --fail http://localhost:8088/enrollment/docker  || exit 1
+       interval: 15s
+       timeout: 5s
+       retries: 10
+    networks:
+      - banking_network
+  discovery-service:
+    image: banking/discovery-service:1.1-SNAPSHOT
+    ports:
+      - "8761:8761"
+    depends_on:
+      config-service:
+        condition: service_healthy
+    links:
+      - config-service
+    healthcheck:
+      test: curl --fail http://localhost:8761/eureka/v2/apps || exit 1
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - banking_network
+
+# Below are some sample services for the banking application.
+  # mysql-Enrollment:
+  #     image: mysql:8.3.0
+  #     container_name: mysql-Enrollment
+  #     ports:
+  #       - "3307:3306"
+  #     environment:
+  #       - MYSQL_ROOT_PASSWORD=root
+  #       - MYSQL_DATABASE=enrollment_service
+  #     volumes:
+  #       - ./mysql/enrollment_data:/var/lib/mysql
+  #       - ./docker/mysql/init_enrollment.sql:/docker-entrypoint-initdb.d/init.sql
+  #     healthcheck:
+  #       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+  #       interval: 15s
+  #       timeout: 5s
+  #       retries: 10
+  #     networks:
+  #       - banking_network
+
+  # admin-service:
+  #   image: banking/admin-service:1.2-SNAPSHOT
+  #   ports:
+  #     - "8080"
+  #   depends_on:
+  #     discovery-service:
+  #       condition: service_healthy
+  #   links:
+  #     - config-service
+  #     - discovery-service
+  #     - zipkin
+  #     - mysql-Enrollment
+  #     - mysql-Order
+  #     - mysql-User
+  #     - mongo-Course
+  #     - mysql-Content
+  #   environment:
+  #     SPRING_PROFILES_ACTIVE: docker
+  #   networks:
+  #     - banking_network
+  # course-service:
+  #   image: banking/course-service:1.2-SNAPSHOT
+  #   ports:
+  #     - "8080"
+  #   depends_on:
+  #     discovery-service:
+  #       condition: service_healthy
+  #   links:
+  #     - config-service
+  #     - discovery-service
+  #     - zipkin
+  #     - mysql-Enrollment
+  #     - mysql-Order
+  #     - mysql-User
+  #     - mongo-Course
+  #     - mysql-Content
+  #     - admin-service
+  #     - content-service
+  #   environment:
+  #     SPRING_PROFILES_ACTIVE: docker
+  #   networks:
+  #       - banking_network
+  # auth-service:
+  #   image: banking/auth-service:1.2-SNAPSHOT
+  #   ports:
+  #     - "8080"
+  #   depends_on:
+  #     discovery-service:
+  #       condition: service_healthy
+  #   links:
+  #     - config-service
+  #     - discovery-service
+  #     - zipkin
+  #     - mysql-Enrollment
+  #     - mysql-Order
+  #     - mysql-User
+  #     - mongo-Course
+  #     - mysql-Content
+  #     - admin-service
+  #     - content-service
+  #     - course-service
+  #     - email-service
+  #     - enrollment-service
+  #     - learner-service
+  #     - order-service
+  #     - payment-service
+  #     - user-service
+  #   environment:
+  #     SPRING_PROFILES_ACTIVE: docker
+  #   networks:
+  #     - banking_network
+  gateway-service:
+    image: banking/gateway-service:0.0.1-SNAPSHOT
+    ports:
+      - "8060:8060"
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    links:
+      - config-service
+      - discovery-service
+      - zipkin
+      # - mysql-Enrollment
+      # - user-service
+      # - auth-service
+    networks:
+      - banking_network
+
+networks:
+  banking_network:
+    driver: bridge
