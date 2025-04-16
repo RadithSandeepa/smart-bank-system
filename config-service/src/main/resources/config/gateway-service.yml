@@ -21,6 +21,18 @@ spring:
         locator:
           enabled: true
       routes:
+        - id: account-service
+          uri: lb://account-service
+          predicates:
+          - Path=/account/**
+          filters:
+          - RewritePath=/account/(?<path>.*),/$\{path}
+        - id: nodejs-test-service
+          uri: lb://nodejs-test-service
+          predicates:
+            - Path=/nodejs/**
+          filters:
+            - RewritePath=/nodejs/(?<path>.*),/$\{path}
 #        Sample services for reference are kept below
 #        - id: admin-service
 #          uri: lb://admin-service
@@ -45,7 +57,7 @@ spring:
           predicates:
             - Path=/v3/api-docs/**
           filters:
-            - RewritePath=/v3/api-docs/(?<path>.*), /$\{path}/v3/api-docs
+            - RewritePath=/v3/api-docs/(?<path>.*),/$\{path}/v3/api-docs
 
 springdoc:
   cache:
@@ -53,6 +65,9 @@ springdoc:
   version: '@springdoc.version@'
   swagger-ui:
     use-root-path: true
+  urls:
+    - name: account
+      url: /v3/api-docs/account
   api-docs:
     version: openapi_3_1
 
