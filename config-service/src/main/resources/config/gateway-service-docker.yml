@@ -20,6 +20,12 @@ spring:
         locator:
           enabled: true
       routes:
+        - id: account-service
+          uri: lb://account-service
+          predicates:
+            - Path=/account/**
+          filters:
+            - RewritePath=/account/(?<path>.*),/$\{path}
 #        - id: admin-service
 #          uri: lb://adminTask-service
 #          predicates:
@@ -31,13 +37,13 @@ spring:
           predicates:
             - Path=/v3/api-docs/**
           filters:
-            - RewritePath=/v3/api-docs/(?<path>.*), /$\{path}/v3/api-docs
+            - RewritePath=/v3/api-docs/(?<path>.*),/$\{path}/v3/api-docs
 
 springdoc:
   swagger-ui:
-    urls:
-#      - name: admin
-#        url: /v3/api-docs/admin
+  urls:
+    - name: account
+      url: /v3/api-docs/account
 
 
 management:
