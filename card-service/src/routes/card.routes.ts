@@ -10,6 +10,8 @@ import {
   deleteCard,
   getCardsByAccount,
 } from "../controllers/card.controller";
+import { validateBody } from "../middleware/validate";
+import { cardSchema } from "../validations/card.validation";
 
 const router = express.Router();
 
@@ -59,7 +61,7 @@ const router = express.Router();
  *         description: Validation error
  */
 // POST /api/cards → Create a new card
-router.post("/", createCard);
+router.post("/", validateBody(cardSchema), createCard);
 
 /**
  * @swagger
@@ -115,7 +117,7 @@ router.get("/:id", getCardById);
  *         description: Card not found
  */
 // PUT /api/cards/:id → Update card
-router.put("/:id", updateCard);
+router.put("/:id", validateBody(cardSchema), updateCard);
 
 /**
  * @swagger

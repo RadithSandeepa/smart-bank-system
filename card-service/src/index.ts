@@ -10,6 +10,8 @@ import cardRoutes from "./routes/card.routes";
 import healthRoutes from "./routes/health.route";
 import { setupSwagger } from "./swagger";
 import { errorHandler } from "./middleware/error.middleware";
+import helmet from "helmet";
+import morgan from "morgan";
 
 dotenv.config();
 const app = express();
@@ -17,6 +19,8 @@ const app = express();
 // Middlewares
 app.use(cors());
 app.use(express.json());
+app.use(helmet()); // Security middleware
+app.use(morgan("dev")); // Logging middleware
 
 // Connect MongoDB
 connectDB();
