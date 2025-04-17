@@ -15,14 +15,6 @@ target/
 
 ### IntelliJ IDEA ###
 .idea
-.idea/
-.idea/compiler.xml
-.idea/encodings.xml
-.idea/git_toolbox_blame.xml
-.idea/jarRepositories.xml
-.idea/misc.xml
-.idea/vcs.xml
-
 *.iws
 *.iml
 *.ipr

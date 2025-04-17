@@ -1,0 +1,79 @@
+
+spring:
+  application:
+    name: account-service
+  datasource:
+    url: jdbc:postgresql://localhost:5433/banking_db
+    username: postgres
+    password: admin
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  rabbitmq:
+    host: localhost
+    port: 5673
+    username: guest
+    password: guest
+  output:
+    ansi:
+      enabled: always
+
+server:
+  port: 0
+  forward-headers-strategy: framework
+#  servlet:
+#    context-path: /api/v1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+springdoc:
+  packagesToScan: com.synapsecode.accountservice.controllers
+  cache:
+    disabled: true
+  version: '@springdoc.version@'
+  api-docs:
+    version: openapi_3_1
+
+logging:
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss}){blue} %clr([%X{traceId:-},%X{spanId:-}]){cyan} %clr(${LOG_LEVEL_PATTERN:-%5p}) %m%n"
+  level:
+    com.banking.accountservice: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+
+#app:
+#  notification:
+#    enabled: true
+#  security:
+#    allowed-origins: http://localhost:3000
+#  audit:
+#    enabled: true
