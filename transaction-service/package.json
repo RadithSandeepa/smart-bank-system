@@ -1,0 +1,24 @@
+{
+  "name": "smart-bank-system",
+  "version": "1.0.0",
+  "description": "The **Smart Banking System** is a microservice-based application designed to simulate essential features of a modern digital bank. The system is structured around secure authentication, account handling, card management, and transaction processing. Each sub-system is developed independently and deployed using containerized microservices, demonstrating DevOps, security, and cloud deployment best practices.",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0",
+    "express-cors": "^0.0.3",
+    "helmet": "^8.1.0",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.9",
+    "sequelize": "^6.37.7",
+    "sqlite3": "^5.1.7"
+  }
+}
