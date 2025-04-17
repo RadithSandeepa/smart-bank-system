@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import { connectDB } from "./config/db";
 import cardRoutes from "./routes/card.routes";
+import healthRoutes from "./routes/health.route";
 import { setupSwagger } from "./swagger";
 
 dotenv.config();
@@ -21,6 +22,7 @@ connectDB();
 
 // Register routes
 app.use("/api/cards", cardRoutes);
+app.use("/api/cardsystem", healthRoutes);
 
 // Setup Swagger UI at /api-docs
 setupSwagger(app);
