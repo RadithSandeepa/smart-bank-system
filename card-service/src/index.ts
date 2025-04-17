@@ -7,17 +7,27 @@ import dotenv from "dotenv";
 import cors from "cors";
 import { connectDB } from "./config/db";
 import cardRoutes from "./routes/card.routes";
+import { setupSwagger } from "./swagger";
 
 dotenv.config();
 const app = express();
 
+// Middlewares
 app.use(cors());
 app.use(express.json());
 
+// Connect MongoDB
 connectDB();
+
+// Register routes
 app.use("/api/cards", cardRoutes);
 
+// Setup Swagger UI at /api-docs
+setupSwagger(app);
+
+// Start server
 const port = process.env.PORT || 4001;
 app.listen(port, () => {
   console.log(`Card service running on port ${port}`);
+  console.log(`Swagger docs at http://localhost:${port}/api-docs`);
 });
