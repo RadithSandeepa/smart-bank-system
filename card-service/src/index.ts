@@ -9,6 +9,7 @@ import { connectDB } from "./config/db";
 import cardRoutes from "./routes/card.routes";
 import healthRoutes from "./routes/health.route";
 import { setupSwagger } from "./swagger";
+import { errorHandler } from "./middleware/error.middleware";
 
 dotenv.config();
 const app = express();
@@ -22,10 +23,13 @@ connectDB();
 
 // Register routes
 app.use("/api/cards", cardRoutes);
-app.use("/api/cardsystem", healthRoutes);
+app.use("/api/card-service", healthRoutes);
 
 // Setup Swagger UI at /api-docs
 setupSwagger(app);
+
+// Global error handler 
+app.use(errorHandler);
 
 // Start server
 const port = process.env.PORT || 4001;
