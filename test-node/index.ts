@@ -2,6 +2,8 @@ import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import { client } from './eureka-client';
 import { zipkinMiddleware } from './zipkin-client';
+import * as apiGateway from './api_g';
+import * as serviceDiscovery from './d_discvoery';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -269,6 +271,90 @@ app.get('/api/accounts/:accountId/transactions', (req: Request, res: Response) =
   accountTransactions.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   
   res.json(accountTransactions);
+});
+
+// ===== Experimental API Gateway Routes =====
+app.get('/api/gateway/balance/:accountId', async (req: Request, res: Response) => {
+  try {
+    const accountId = req.params.accountId;
+    const balanceInfo = await apiGateway.checkAccountBalance(accountId);
+    res.json(balanceInfo);
+  } catch (error) {
+    console.error('API Gateway Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to retrieve account balance via API Gateway', 
+      message: error instanceof Error ? error.message : String(error) 
+    });
+  }
+});
+
+app.post('/api/gateway/transaction', async (req: Request, res: Response) => {
+  try {
+    const { accountId, amount } = req.body;
+    
+    if (!accountId || amount === undefined) {
+      return res.status(400).json({ error: 'Missing required fields: accountId and amount' });
+    }
+    
+    const result = await apiGateway.processTransaction(accountId, amount);
+    res.json(result);
+  } catch (error) {
+    console.error('API Gateway Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to process transaction via API Gateway', 
+      message: error instanceof Error ? error.message : String(error) 
+    });
+  }
+});
+
+// ===== Experimental Service Discovery Routes =====
+app.get('/api/discovery/balance/:accountId', async (req: Request, res: Response) => {
+  try {
+    const accountId = req.params.accountId;
+    const balanceInfo = await serviceDiscovery.checkAccountBalance(accountId);
+    res.json(balanceInfo);
+  } catch (error) {
+    console.error('Service Discovery Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to retrieve account balance via Service Discovery', 
+      message: error instanceof Error ? error.message : String(error) 
+    });
+  }
+});
+
+app.get('/api/discovery/services/:serviceName', async (req: Request, res: Response) => {
+  try {
+    const serviceName = req.params.serviceName;
+    const instances = await serviceDiscovery.getServiceInstances(serviceName);
+    res.json({
+      serviceName,
+      instanceCount: instances.length,
+      instances
+    });
+  } catch (error) {
+    console.error('Service Discovery Error:', error);
+    res.status(500).json({ 
+      error: `Failed to get instances for service: ${req.params.serviceName}`,
+      message: error instanceof Error ? error.message : String(error) 
+    });
+  }
+});
+
+app.get('/api/discovery/url/:serviceName', async (req: Request, res: Response) => {
+  try {
+    const serviceName = req.params.serviceName;
+    const url = await serviceDiscovery.getServiceUrl(serviceName);
+    res.json({
+      serviceName,
+      url
+    });
+  } catch (error) {
+    console.error('Service Discovery Error:', error);
+    res.status(500).json({ 
+      error: `Failed to get URL for service: ${req.params.serviceName}`,
+      message: error instanceof Error ? error.message : String(error) 
+    });
+  }
 });
 
 app.get('/health', (req, res) => {
