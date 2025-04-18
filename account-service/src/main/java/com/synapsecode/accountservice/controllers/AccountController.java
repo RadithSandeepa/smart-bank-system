@@ -8,6 +8,7 @@ import com.synapsecode.accountservice.entity.AccountStatus;
 import com.synapsecode.accountservice.listener.KycValidationEventListener;
 import com.synapsecode.accountservice.service.AccountService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,14 +22,11 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/accounts")
+@RequiredArgsConstructor
 public class AccountController {
 
     private final AccountService accountService;
     private static final Logger log = LoggerFactory.getLogger(AccountController.class);
-
-    public AccountController(AccountService accountService) {
-        this.accountService = accountService;
-    }
 
     @GetMapping("/sample")
     public String sampleGet(){
@@ -111,7 +109,7 @@ public class AccountController {
         return ResponseEntity.ok(balance);
     }
 
-    @PutMapping("/{accountId}/kyc")
+    @PutMapping("/{accountId}/kyc/{documentId}")
     public ResponseEntity<AccountResponse> updateKycStatus(
             @PathVariable UUID accountId,
             @PathVariable UUID documentId,

@@ -1,4 +1,5 @@
 version: "3.7"
+name: banking-microservice
 services:
   zipkin:
     container_name: zipkin
@@ -37,6 +38,47 @@ services:
       SPRING_PROFILES_ACTIVE: docker
     networks:
       - banking_network
+  pgsql-account:
+    image: postgres:15-alpine
+    container_name: pgsql-account
+    restart: always
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=100"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_MULTIPLE_DATABASES: banking_db
+      POSTGRES_MAX_CONNECTIONS: 100
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/postgres/init-multiple-db.sh:/docker-entrypoint-initdb.d/init-multiple-db.sh
+    ports:
+      - "5433:5433"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - banking_network
+  account-service:
+     image: banking/account-service:1.1-SNAPSHOT
+     ports:
+       - "8080"
+     depends_on:
+       discovery-service:
+         condition: service_healthy
+     links:
+       - config-service
+       - discovery-service
+       - zipkin
+       - pgsql-account
+     environment:
+       SPRING_PROFILES_ACTIVE: docker
+     networks:
+       - banking_network
 
 # Below are some sample services for the banking application.
   # mysql-Enrollment:
@@ -142,6 +184,8 @@ services:
       - config-service
       - discovery-service
       - zipkin
+      - pgsql-account
+      - account-service
       # - mysql-Enrollment
       # - user-service
       # - auth-service
