@@ -12,6 +12,7 @@ import { setupSwagger } from "./swagger";
 import { errorHandler } from "./middleware/error.middleware";
 import helmet from "helmet";
 import morgan from "morgan";
+import { startEureka } from './eureka';
 
 dotenv.config();
 const app = express();
@@ -41,3 +42,6 @@ app.listen(port, () => {
   console.log(`Card service running on port ${port}`);
   console.log(`Swagger docs at http://localhost:${port}/api-docs`);
 });
+
+// Start Eureka service registration for service discovery
+startEureka();
