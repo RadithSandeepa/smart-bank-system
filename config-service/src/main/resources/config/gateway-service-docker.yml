@@ -32,12 +32,18 @@ spring:
             - Path=/nodejs/**
           filters:
             - RewritePath=/nodejs/(?<path>.*),/$\{path}
-#        - id: admin-service
-#          uri: lb://adminTask-service
-#          predicates:
-#            - Path=/adminTask/**
-#          filters:
-#            - RewritePath=/adminTask/(?<path>.*), /$\{path}
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/user/**
+          filters:
+            - RewritePath=/user/(?<path>.*), /api/user/${path}
+        #        - id: admin-service
+        #          uri: lb://adminTask-service
+        #          predicates:
+        #            - Path=/adminTask/**
+        #          filters:
+        #            - RewritePath=/adminTask/(?<path>.*), /$\{path}
         - id: openapi
           uri: http://localhost:${server.port}
           predicates:
@@ -50,7 +56,6 @@ springdoc:
   urls:
     - name: account
       url: /v3/api-docs/account
-
 
 management:
   tracing:
