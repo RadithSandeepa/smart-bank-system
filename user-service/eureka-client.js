@@ -1,38 +1,42 @@
 const { Eureka } = require("eureka-js-client");
+import os from 'os';
+
+
+const hostname = process.env.HOSTNAME || os.hostname();
 
 // Configure Eureka client
 const client = new Eureka({
   instance: {
     app: "user-service",
-    hostName: "localhost",
-    ipAddr: "127.0.0.1",
+    hostName: "user-service",
+    ipAddr: hostname,
     port: {
-      $: 3000,
+      $: 5000,
       "@enabled": true,
     },
     vipAddress: "user-service",
     secureVipAddress: "user-service",
     status: "UP",
-    homePageUrl: "http://localhost:3000",
-    statusPageUrl: "http://localhost:3000/info",
-    healthCheckUrl: "http://localhost:3000/health",
+    homePageUrl: "http://localhost:5000",
+    statusPageUrl: "http://localhost:5000/info",
+    healthCheckUrl: "http://localhost:5000/health",
     dataCenterInfo: {
       "@class": "com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo",
       name: "MyOwn",
     },
     metadata: {
       apiGatewayUrl: "http://localhost:8060",
-      "management.port": "3000",
+      "management.port": "5000",
     },
   },
   eureka: {
-    host: "localhost",
+    host: 'discovery-service',
     port: 8761,
-    servicePath: "/eureka/apps/",
+    servicePath: '/eureka/apps/',
     preferIpAddress: true,
     fetchRegistry: true,
     registerWithEureka: true,
-    maxRetries: 3,
+    maxRetries: 3
   },
 });
 

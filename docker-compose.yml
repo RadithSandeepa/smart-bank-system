@@ -74,6 +74,7 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./docker/postgres/account.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./docker/postgres/transactions.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5434:5432"
     healthcheck:
@@ -113,6 +114,77 @@ services:
         condition: service_healthy
       discovery-service:
         condition: service_healthy
+    links:
+      - config-service
+      - discovery-service
+      - zipkin
+      - pgsql-account
+    environment:
+      NODE_ENV: production
+    networks:
+      - banking_network
+  card-service:
+    container_name: card-service
+    image: banking/card-service:1.1-SNAPSHOT
+    build:
+      context: ./card-service       # relative path to your Node module
+      dockerfile: Dockerfile     # ensure this file exists in test-node/
+    ports:
+      - "3000"              # adjust if your app listens on a different port
+    depends_on:
+      config-service:
+        condition: service_healthy
+      discovery-service:
+        condition: service_healthy
+    links:
+      - config-service
+      - discovery-service
+      - zipkin
+      - pgsql-account
+    environment:
+      NODE_ENV: production
+    networks:
+      - banking_network
+  transaction-service:
+    container_name: transaction-service
+    image: banking/transaction-service:1.1-SNAPSHOT
+    build:
+      context: ./transaction-service       # relative path to your Node module
+      dockerfile: Dockerfile     # ensure this file exists in test-node/
+    ports:
+      - "3000"              # adjust if your app listens on a different port
+    depends_on:
+      config-service:
+        condition: service_healthy
+      discovery-service:
+        condition: service_healthy
+    links:
+      - config-service
+      - discovery-service
+      - zipkin
+      - pgsql-account
+    environment:
+      NODE_ENV: production
+    networks:
+      - banking_network
+  user-service:
+    container_name: user-service
+    image: banking/user-service:1.1-SNAPSHOT
+    build:
+      context: ./user-service       # relative path to your Node module
+      dockerfile: Dockerfile     # ensure this file exists in test-node/
+    ports:
+      - "3000"              # adjust if your app listens on a different port
+    depends_on:
+      config-service:
+        condition: service_healthy
+      discovery-service:
+        condition: service_healthy
+    links:
+      - config-service
+      - discovery-service
+      - zipkin
+      - pgsql-account
     environment:
       NODE_ENV: production
     networks:

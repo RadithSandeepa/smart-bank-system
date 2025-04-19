@@ -12,7 +12,7 @@
         <version>1.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>test-node</artifactId>
+    <artifactId>user-service</artifactId>
     <packaging>pom</packaging>
 
     <properties>

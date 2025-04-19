@@ -45,6 +45,12 @@ spring:
             - Path=/cards/**
           filters:
             - RewritePath=/cards/(?<path>.*), /api/cards/${path}
+        - id: transactions-service
+          uri: lb://transactions-service
+          predicates:
+            - Path=/transactions/**
+          filters:
+            - RewritePath=/transactions/(?<path>.*), /api/user/${path}
 #        Sample services for reference are kept below
 #        - id: admin-service
 #          uri: lb://admin-service
