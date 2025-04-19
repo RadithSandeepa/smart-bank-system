@@ -1,17 +1,23 @@
 import { Eureka } from 'eureka-js-client';
+import os from 'os';
+
+
+const hostname = process.env.HOSTNAME || os.hostname();
 
 // Configure Eureka client
 export const client = new Eureka({
     instance: {
-        app: 'nodejs-test-service',
-        hostName: 'localhost',
-        ipAddr: '127.0.0.1',
+        app: 'test-node',
+        hostName: 'test-node',  // Use the container name
+        ipAddr: hostname,       // This will get the container's IP
+        // hostName: 'localhost',
+        // ipAddr: '127.0.0.1',
         port: {
             '$': 3000,
             '@enabled': true,
         },
-        vipAddress: 'nodejs-test-service',
-        secureVipAddress: 'nodejs-test-service',
+        vipAddress: 'test-node',
+        secureVipAddress: 'test-node',
         status: 'UP',
         homePageUrl: 'http://localhost:3000',
         statusPageUrl: 'http://localhost:3000/info',
@@ -26,7 +32,7 @@ export const client = new Eureka({
         }
     },
     eureka: {
-        host: 'localhost',
+        host: 'discovery-service',
         port: 8761,
         servicePath: '/eureka/apps/',
         preferIpAddress: true,

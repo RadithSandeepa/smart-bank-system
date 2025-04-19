@@ -51,18 +51,18 @@
     </dependency>
 
     <!-- JUnit 5 -->
-    <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-api</artifactId>
-        <version>5.10.0</version>
-        <scope>test</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-engine</artifactId>
-        <version>5.10.0</version>
-        <scope>test</scope>
-    </dependency>
+<!--    <dependency>-->
+<!--        <groupId>org.junit.jupiter</groupId>-->
+<!--        <artifactId>junit-jupiter-api</artifactId>-->
+<!--        <version>5.10.0</version>-->
+<!--        <scope>test</scope>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--        <groupId>org.junit.jupiter</groupId>-->
+<!--        <artifactId>junit-jupiter-engine</artifactId>-->
+<!--        <version>5.10.0</version>-->
+<!--        <scope>test</scope>-->
+<!--    </dependency>-->
 
     <!-- Spring Boot Test -->
     <dependency>
@@ -94,8 +94,9 @@
                             <host>//./pipe/dockerDesktopLinuxEngine</host>
                         </docker>
                         <image>
-                            <builder>paketobuildpacks/builder-jammy-base:latest</builder>
+                            <builder>paketobuildpacks/builder-jammy-base:0.4.400</builder>
                             <name>banking/${project.artifactId}:${project.version}</name>
+                            <pullPolicy>IF_NOT_PRESENT</pullPolicy>
                         </image>
                     </configuration>
                     <executions>

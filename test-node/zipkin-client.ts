@@ -4,8 +4,8 @@ import CLSContext from 'zipkin-context-cls';
 import { expressMiddleware } from 'zipkin-instrumentation-express';
 
 // Default to localhost if not configured
-const ZIPKIN_ENDPOINT = process.env.ZIPKIN_URL || 'http://localhost:9411';
-const SERVICE_NAME = 'node-service';
+const ZIPKIN_ENDPOINT = process.env.ZIPKIN_URL || 'http://zipkin:9411';
+const SERVICE_NAME = 'test-node';
 
 // Setup the tracer
 const recorder = new BatchRecorder({

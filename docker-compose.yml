@@ -9,7 +9,25 @@ services:
       - "9411:9411"
     networks:
       - banking_network
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15673:15672"
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - banking_network
   config-service:
+    container_name: config-service
     image: banking/config-server:1.1-SNAPSHOT
     ports:
       - "8088:8088"
@@ -21,6 +39,7 @@ services:
     networks:
       - banking_network
   discovery-service:
+    container_name: discovery-service
     image: banking/discovery-service:1.1-SNAPSHOT
     ports:
       - "8761:8761"
@@ -49,13 +68,14 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
+      POSTGRES_DB: postgres
       POSTGRES_MULTIPLE_DATABASES: banking_db
       POSTGRES_MAX_CONNECTIONS: 100
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - ./docker/postgres/init-multiple-db.sh:/docker-entrypoint-initdb.d/init-multiple-db.sh
+      - ./docker/postgres/account.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - "5433:5433"
+      - "5434:5432"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
@@ -64,7 +84,8 @@ services:
     networks:
       - banking_network
   account-service:
-     image: banking/account-service:1.1-SNAPSHOT
+     container_name: account-service
+     image: banking/account-service:1.0-SNAPSHOT
      ports:
        - "8080"
      depends_on:
@@ -79,7 +100,23 @@ services:
        SPRING_PROFILES_ACTIVE: docker
      networks:
        - banking_network
-
+  test-node:
+    container_name: test-node
+    image: banking/test-node:1.1-SNAPSHOT
+    build:
+      context: ./test-node       # relative path to your Node module
+      dockerfile: Dockerfile     # ensure this file exists in test-node/
+    ports:
+      - "3000"              # adjust if your app listens on a different port
+    depends_on:
+      config-service:
+        condition: service_healthy
+      discovery-service:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+    networks:
+      - banking_network
 # Below are some sample services for the banking application.
   # mysql-Enrollment:
   #     image: mysql:8.3.0
@@ -99,7 +136,6 @@ services:
   #       retries: 10
   #     networks:
   #       - banking_network
-
   # admin-service:
   #   image: banking/admin-service:1.2-SNAPSHOT
   #   ports:
@@ -120,58 +156,8 @@ services:
   #     SPRING_PROFILES_ACTIVE: docker
   #   networks:
   #     - banking_network
-  # course-service:
-  #   image: banking/course-service:1.2-SNAPSHOT
-  #   ports:
-  #     - "8080"
-  #   depends_on:
-  #     discovery-service:
-  #       condition: service_healthy
-  #   links:
-  #     - config-service
-  #     - discovery-service
-  #     - zipkin
-  #     - mysql-Enrollment
-  #     - mysql-Order
-  #     - mysql-User
-  #     - mongo-Course
-  #     - mysql-Content
-  #     - admin-service
-  #     - content-service
-  #   environment:
-  #     SPRING_PROFILES_ACTIVE: docker
-  #   networks:
-  #       - banking_network
-  # auth-service:
-  #   image: banking/auth-service:1.2-SNAPSHOT
-  #   ports:
-  #     - "8080"
-  #   depends_on:
-  #     discovery-service:
-  #       condition: service_healthy
-  #   links:
-  #     - config-service
-  #     - discovery-service
-  #     - zipkin
-  #     - mysql-Enrollment
-  #     - mysql-Order
-  #     - mysql-User
-  #     - mongo-Course
-  #     - mysql-Content
-  #     - admin-service
-  #     - content-service
-  #     - course-service
-  #     - email-service
-  #     - enrollment-service
-  #     - learner-service
-  #     - order-service
-  #     - payment-service
-  #     - user-service
-  #   environment:
-  #     SPRING_PROFILES_ACTIVE: docker
-  #   networks:
-  #     - banking_network
   gateway-service:
+    container_name: gateway-service
     image: banking/gateway-service:0.0.1-SNAPSHOT
     ports:
       - "8060:8060"
@@ -186,6 +172,7 @@ services:
       - zipkin
       - pgsql-account
       - account-service
+      - test-node
       # - mysql-Enrollment
       # - user-service
       # - auth-service
@@ -195,3 +182,6 @@ services:
 networks:
   banking_network:
     driver: bridge
+
+volumes:
+  postgres-data:
