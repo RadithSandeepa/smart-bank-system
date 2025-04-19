@@ -24,34 +24,40 @@ spring:
         - id: account-service
           uri: lb://account-service
           predicates:
-          - Path=/account/**
+            - Path=/account/**
           filters:
-          - RewritePath=/account/(?<path>.*),/$\{path}
+            - RewritePath=/account/(?<path>.*),/$\{path}
         - id: nodejs-test-service
           uri: lb://nodejs-test-service
           predicates:
             - Path=/nodejs/**
           filters:
             - RewritePath=/nodejs/(?<path>.*),/$\{path}
-#        Sample services for reference are kept below
-#        - id: admin-service
-#          uri: lb://admin-service
-#          predicates:
-#          - Path=/admin/**
-#          filters:
-#          - RewritePath=/admin/(?<path>.*), /$\{path}
-#        - id: auth-service
-#          uri: lb://auth-service
-#          predicates:
-#            - Path=/auth/**
-#          filters:
-#            - RewritePath=/auth/(?<path>.*), /$\{path}
-#        - id: user-service
-#          uri: lb://user-service
-#          predicates:
-#            - Path=/user/**
-#          filters:
-#            - RewritePath=/user/(?<path>.*), /$\{path}
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/user/**
+          filters:
+            - RewritePath=/user/(?<path>.*), /api/user/${path}
+        #        Sample services for reference are kept below
+        #        - id: admin-service
+        #          uri: lb://admin-service
+        #          predicates:
+        #          - Path=/admin/**
+        #          filters:
+        #          - RewritePath=/admin/(?<path>.*), /$\{path}
+        #        - id: auth-service
+        #          uri: lb://auth-service
+        #          predicates:
+        #            - Path=/auth/**
+        #          filters:
+        #            - RewritePath=/auth/(?<path>.*), /$\{path}
+        #        - id: user-service
+        #          uri: lb://user-service
+        #          predicates:
+        #            - Path=/user/**
+        #          filters:
+        #            - RewritePath=/user/(?<path>.*), /$\{path}
         - id: openapi
           uri: http://localhost:${server.port}
           predicates:
@@ -62,7 +68,7 @@ spring:
 springdoc:
   cache:
     disabled: true
-  version: '@springdoc.version@'
+  version: "@springdoc.version@"
   swagger-ui:
     use-root-path: true
   urls:
