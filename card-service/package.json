@@ -21,7 +21,8 @@
     "mongoose": "^8.13.2",
     "morgan": "^1.10.0",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "typescript": "^5.2.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

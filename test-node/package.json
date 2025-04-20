@@ -19,7 +19,8 @@
     "zipkin": "^0.22.0",
     "zipkin-context-cls": "^0.22.0",
     "zipkin-instrumentation-express": "^0.22.0",
-    "zipkin-transport-http": "^0.22.0"
+    "zipkin-transport-http": "^0.22.0",
+    "typescript": "^5.2.2"
   },
   "devDependencies": {
     "@types/eureka-js-client": "^4.5.9",
