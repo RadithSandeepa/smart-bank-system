@@ -1,6 +1,7 @@
 {
   "name": "user-service",
   "version": "1.0.0",
+  "type": "module",
   "main": "server.js",
   "scripts": {
     "build": "echo \"⏩ no build step needed for plain JS\"",
@@ -12,6 +13,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "pg": "^8.10.0",
+    "pg-hstore": "^2.3.4",
     "bcrypt": "^5.1.1",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",

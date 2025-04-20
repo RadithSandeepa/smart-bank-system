@@ -1,6 +1,8 @@
 import { Sequelize } from "sequelize";
 import fs from 'fs';
 import path from 'path';
+import dotenv from 'dotenv';
+dotenv.config();
 
 // Create data directory if it doesn't exist
 const dataDir = path.join(process.cwd(), 'data');
