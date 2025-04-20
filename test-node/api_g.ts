@@ -14,7 +14,7 @@ interface TransactionResult {
 }
 
 // Configure API Gateway URL with fallback to mock responses
-const API_GATEWAY_URL = process.env.API_GATEWAY_URL || 'http://localhost:8060';
+const API_GATEWAY_URL = process.env.API_GATEWAY_URL || 'http://gateway-service:8060';
 // Set to true to use mock data when API gateway is unavailable
 const USE_MOCK_FALLBACK = true;
 

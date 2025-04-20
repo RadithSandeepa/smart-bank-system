@@ -26,8 +26,8 @@ spring:
             - Path=/account/**
           filters:
             - RewritePath=/account/(?<path>.*),/$\{path}
-        - id: nodejs-test-service
-          uri: lb://nodejs-test-service
+        - id: test-node
+          uri: lb://test-node
           predicates:
             - Path=/nodejs/**
           filters:
@@ -38,18 +38,18 @@ spring:
             - Path=/cards/**
           filters:
             - RewritePath=/cards/(?<path>.*), /api/cards/${path}
-#        - id: admin-service
-#          uri: lb://adminTask-service
-#          predicates:
-#            - Path=/adminTask/**
-#          filters:
-#            - RewritePath=/adminTask/(?<path>.*), /$\{path}
         - id: user-service
           uri: lb://user-service
           predicates:
             - Path=/user/**
           filters:
             - RewritePath=/user/(?<path>.*), /api/user/${path}
+        - id: transactions-service
+          uri: lb://transactions-service
+          predicates:
+            - Path=/transactions/**
+          filters:
+            - RewritePath=/transactions/(?<path>.*), /api/user/${path}
         #        - id: admin-service
         #          uri: lb://adminTask-service
         #          predicates:
