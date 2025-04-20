@@ -158,6 +158,9 @@ jobs:
           DOCKER_CERT_PATH: ''                                                           # optional—empty when using Unix socket
         run: mvn --batch-mode clean install -Pbuild-image -DskipTests                    # :contentReference[oaicite:3]{index=3}
 
+      - name: Package Config Service
+        run: mvn clean package -DskipTests -pl config-service
+
       - name: Build Docker images for each service
         run: |
           # Spring Boot services (use Dockerfile in each folder)
