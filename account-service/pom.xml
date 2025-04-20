@@ -135,8 +135,48 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals><goal>build-image</goal></goals>
+					</execution>
+				</executions>
+				<configuration>
+					<image>
+						<name>banking/account-service:${project.version}</name>
+					</image>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>build-image</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<configuration>
+							<docker>
+								<host>//./pipe/dockerDesktopLinuxEngine</host>
+							</docker>
+							<image>
+								<builder>paketobuildpacks/builder-jammy-base:0.4.400</builder>
+								<name>banking/${project.artifactId}:${project.version}</name>
+								<pullPolicy>IF_NOT_PRESENT</pullPolicy>
+							</image>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>build-image</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

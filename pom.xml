@@ -27,6 +27,10 @@
         <module>config-service</module>
         <module>gateway-service</module>
         <module>account-service</module>
+        <module>test-node</module>
+        <module>user-service</module>
+        <module>card-service</module>
+        <module>transaction-service</module>
 <!--        <module>test-gPRC</module>-->
     </modules>
 
