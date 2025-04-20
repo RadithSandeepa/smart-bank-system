@@ -16,6 +16,7 @@
   "dependencies": {
     "body-parser": "^2.2.0",
     "dotenv": "^16.5.0",
+    "eureka-js-client": "^4.5.0",
     "express": "^5.1.0",
     "express-cors": "^0.0.3",
     "helmet": "^8.1.0",
@@ -24,6 +25,10 @@
     "pg": "^8.10.0",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.7",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "zipkin": "^0.22.0",
+    "zipkin-context-cls": "^0.22.0",
+    "zipkin-instrumentation-express": "^0.22.0",
+    "zipkin-transport-http": "^0.22.0"
   }
 }

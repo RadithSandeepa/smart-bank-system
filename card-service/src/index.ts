@@ -13,11 +13,13 @@ import { errorHandler } from "./middleware/error.middleware";
 import helmet from "helmet";
 import morgan from "morgan";
 import { startEureka } from './eureka';
+import { zipkinMiddleware } from './zipkin';
 
 dotenv.config();
 const app = express();
 
 // Middlewares
+app.use(zipkinMiddleware); // Zipkin middleware for tracing
 app.use(cors());
 app.use(express.json());
 app.use(helmet()); // Security middleware

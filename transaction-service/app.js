@@ -1,3 +1,7 @@
+/*
+ *   Copyright (c) 2025 Radith Sandeepa
+ *   All rights reserved.
+ */
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "express-cors";
@@ -5,11 +9,14 @@ import helmet from "helmet";
 import morgan from "morgan";
 import sequelize from "./config/db.js";
 import transactionRoutes from "./routes/transaction.route.js";
+import eureka from './eureka.js';
+import { zipkinMiddleware } from './zipkin';
 
 // Initialize express app
 const app = express();
 
 // Apply middleware
+app.use(zipkinMiddleware); // Zipkin tracing middleware
 app.use(helmet()); // Security headers
 app.use(cors({
   allowedOrigins: ['localhost:*', process.env.FRONTEND_URL || '*']
@@ -62,6 +69,14 @@ const startServer = async () => {
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
       console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+
+      eureka.start((err) => {
+        if (err) {
+          console.error("Eureka registration failed:", err);
+        } else {
+          console.log("Registered with Eureka as transactions-service");
+        }
+      });
     });
   } catch (error) {
     console.error("Failed to start server:", error);
