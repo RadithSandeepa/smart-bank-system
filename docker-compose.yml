@@ -130,7 +130,7 @@ services:
       context: ./card-service       # relative path to your Node module
       dockerfile: Dockerfile     # ensure this file exists in test-node/
     ports:
-      - "3000"              # adjust if your app listens on a different port
+      - "4000"              # adjust if your app listens on a different port
     depends_on:
       config-service:
         condition: service_healthy
@@ -152,7 +152,7 @@ services:
       context: ./transaction-service       # relative path to your Node module
       dockerfile: Dockerfile     # ensure this file exists in test-node/
     ports:
-      - "3000"              # adjust if your app listens on a different port
+      - "4002"              # adjust if your app listens on a different port
     depends_on:
       config-service:
         condition: service_healthy
@@ -174,7 +174,7 @@ services:
       context: ./user-service       # relative path to your Node module
       dockerfile: Dockerfile     # ensure this file exists in test-node/
     ports:
-      - "3000"              # adjust if your app listens on a different port
+      - "5000"              # adjust if your app listens on a different port
     depends_on:
       config-service:
         condition: service_healthy
