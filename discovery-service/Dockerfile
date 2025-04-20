@@ -1,5 +1,5 @@
 # discovery-service/Dockerfile
-FROM openjdk:17-jre-alpine
+FROM eclipse-temurin:17-jre-alpine
 ENV APP_FILE discovery-Service-1.1-SNAPSHOT.jar
 ENV APP_HOME /app
 EXPOSE 8761

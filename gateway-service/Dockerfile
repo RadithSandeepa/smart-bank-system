@@ -1,5 +1,5 @@
 # gateway-service/Dockerfile
-FROM openjdk:17-jre-alpine
+FROM eclipse-temurin:17-jre-alpine
 ENV APP_FILE gateway-service-0.0.1-SNAPSHOT.jar
 ENV APP_HOME /app
 EXPOSE 8060
