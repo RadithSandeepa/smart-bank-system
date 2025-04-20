@@ -65,7 +65,8 @@
                     </execution>
                 </executions>
                 <configuration>
-<!--                    <dockerHost>npipe:////./pipe/docker_engine</dockerHost>-->
+                    <noCache>true</noCache>
+                    <!--                    <dockerHost>npipe:////./pipe/docker_engine</dockerHost>-->
                     <repository>banking/${project.artifactId}</repository>
                     <tag>${project.version}</tag>
                 </configuration>
