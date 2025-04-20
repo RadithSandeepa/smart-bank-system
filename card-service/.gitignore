@@ -1,6 +1,7 @@
 # Node modules
 node_modules/
-
+node/
+target/
 # Build output
 dist/
 
