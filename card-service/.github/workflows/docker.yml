@@ -2,12 +2,13 @@ name: Docker Build & CI
 
 on:
   push:
-    branches: [main]
+    branches: [feat/cards]
   pull_request:
-    branches: [main]
+    branches: [feat/cards]
 
 jobs:
   build:
+    name: Build Card Service
     runs-on: ubuntu-latest
 
     steps:
@@ -19,13 +20,14 @@ jobs:
         with:
           node-version: 18
 
-      - name: 📦 Install Dependencies
+      - name: Install Dependencies
         run: npm install
 
-      - name: 🔎 Lint / Compile TypeScript
+      - name: Lint / Compile TypeScript
         run: |
           npm run build
-          echo "✅ Build successful"
+          echo "Build successful"
 
-      - name: 🐳 Build Docker Image
+      - name: Build Docker Image
         run: docker build -t card-service .
+        
