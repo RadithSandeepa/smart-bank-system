@@ -1,7 +1,3 @@
-/*
- *   Copyright (c) 2025 Radith Sandeepa
- *   All rights reserved.
- */
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "express-cors";
