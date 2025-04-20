@@ -5,7 +5,7 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "build": "tsc -p .",
+    "build": "echo \"⏩ no build step needed for plain JS\"",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app.js",
     "start": "node dist/index.js"
