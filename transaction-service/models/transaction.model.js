@@ -1,7 +1,3 @@
-/*
- *   Copyright (c) 2025 Radith Sandeepa
- *   All rights reserved.
- */
 import { DataTypes } from "sequelize";
 import sequelize from "../config/db.js";
 
