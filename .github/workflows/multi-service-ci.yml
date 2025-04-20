@@ -137,45 +137,47 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-package:
-    name: Build & Package All Modules
+  build-and-dockerize:
+    name: Build & Dockerize All Services
     runs-on: ubuntu-latest
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v4                                       
+        uses: actions/checkout@v4                                   # Checkout the monorepo root :contentReference[oaicite:4]{index=4}
 
-      - name: Set up JDK 17 with Maven cache
-        uses: actions/setup-java@v4                                     
+      - name: Set up JDK 17 & cache Maven
+        uses: actions/setup-java@v4                                 # Java and dependency caching :contentReference[oaicite:5]{index=5}
         with:
-          distribution: 'temurin'
+          distribution: temurin
           java-version: '17'
-          cache: maven                                                  
+          cache: maven
 
-      - name: Build & install parent + submodules
-        run: mvn --batch-mode clean install -Pbuild-image -DskipTests   
+      - name: Build all Java modules
+        run: mvn --batch-mode clean install -DskipTests              # Installs parent POM + submodules without build-image :contentReference[oaicite:6]{index=6}
 
       - name: Build Docker images
         run: |
-          # Core Spring Boot services via Dockerfile
-          docker build -t banking/config-service:${{ github.sha }} config-service    
+          # Spring Boot services
+          docker build -t banking/config-service:${{ github.sha }} config-service    # :contentReference[oaicite:7]{index=7}
           docker build -t banking/discovery-service:${{ github.sha }} discovery-service
           docker build -t banking/gateway-service:${{ github.sha }} gateway-service
           docker build -t banking/account-service:${{ github.sha }} account-service
+          
+          # Node-based business services
+          docker build -t banking/test-node:${{ github.sha }} test-node
           docker build -t banking/user-service:${{ github.sha }} user-service
           docker build -t banking/card-service:${{ github.sha }} card-service
           docker build -t banking/transaction-service:${{ github.sha }} transaction-service
 
-      # Optionally push to Docker registry:
+      # Uncomment the following to push to Docker Hub or another registry:
       #- name: Log in to Docker Hub
-      #  uses: docker/login-action@v3                                      # :contentReference[oaicite:5]{index=5}
+      #  uses: docker/login-action@v3                                  # Authenticate to Docker registry :contentReference[oaicite:8]{index=8}
       #  with:
-      #    username: ${{ secrets.DOCKERHUB_USERNAME }}
+      #    username: ${{ secrets.DOCKERHUB_USER }}
       #    password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      # And then push:
+      #
       #- name: Push images
       #  run: |
       #    docker push banking/config-service:${{ github.sha }}
+      #    docker push banking/discovery-service:${{ github.sha }}
       #    …etc.
-
