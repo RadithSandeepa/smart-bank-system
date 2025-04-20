@@ -127,7 +127,6 @@
 #       - run: mvn clean package
 #       - run: docker build -t config-service .
 
-
 name: Smart Banking CI/CD
 
 on:
@@ -137,47 +136,60 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-dockerize:
-    name: Build & Dockerize All Services
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v4                                   # Checkout the monorepo root :contentReference[oaicite:4]{index=4}
+        uses: actions/checkout@v4                                                      # :contentReference[oaicite:0]{index=0}
 
-      - name: Set up JDK 17 & cache Maven
-        uses: actions/setup-java@v4                                 # Java and dependency caching :contentReference[oaicite:5]{index=5}
+      - name: Set up JDK 17 with Maven cache
+        uses: actions/setup-java@v4                                                      # :contentReference[oaicite:1]{index=1}
         with:
           distribution: temurin
           java-version: '17'
           cache: maven
 
-      - name: Build all Java modules
-        run: mvn --batch-mode clean install -DskipTests              # Installs parent POM + submodules without build-image :contentReference[oaicite:6]{index=6}
+      - name: Build & install all modules (incl. build-image)
+        env:
+          DOCKER_HOST: unix:///var/run/docker.sock                                      # :contentReference[oaicite:2]{index=2}
+          DOCKER_TLS_VERIFY: ''                                                          # optional—empty when using Unix socket
+          DOCKER_CERT_PATH: ''                                                           # optional—empty when using Unix socket
+        run: mvn --batch-mode clean install -Pbuild-image -DskipTests                    # :contentReference[oaicite:3]{index=3}
 
-      - name: Build Docker images
+      - name: Build Docker images for each service
         run: |
-          # Spring Boot services
-          docker build -t banking/config-service:${{ github.sha }} config-service    # :contentReference[oaicite:7]{index=7}
+          # Spring Boot services (use Dockerfile in each folder)
+          docker build -t banking/config-service:${{ github.sha }} config-service       # :contentReference[oaicite:4]{index=4}
           docker build -t banking/discovery-service:${{ github.sha }} discovery-service
           docker build -t banking/gateway-service:${{ github.sha }} gateway-service
           docker build -t banking/account-service:${{ github.sha }} account-service
-          
-          # Node-based business services
+
+          # Node.js services
           docker build -t banking/test-node:${{ github.sha }} test-node
           docker build -t banking/user-service:${{ github.sha }} user-service
           docker build -t banking/card-service:${{ github.sha }} card-service
           docker build -t banking/transaction-service:${{ github.sha }} transaction-service
 
-      # Uncomment the following to push to Docker Hub or another registry:
-      #- name: Log in to Docker Hub
-      #  uses: docker/login-action@v3                                  # Authenticate to Docker registry :contentReference[oaicite:8]{index=8}
-      #  with:
-      #    username: ${{ secrets.DOCKERHUB_USER }}
-      #    password: ${{ secrets.DOCKERHUB_TOKEN }}
-      #
-      #- name: Push images
+      - name: Start all services via Docker Compose
+        uses: hoverkraft-tech/compose-action@v2                                       # :contentReference[oaicite:5]{index=5}
+        with:
+          compose-file: docker-compose.yml
+          up-flags: '-d --build'                                                        # build images if anything changed
+          services: |
+            config-service
+            discovery-service
+            gateway-service
+            account-service
+            test-node
+            user-service
+            card-service
+            transaction-service
+
+      # (Optional) Add smoke tests or integration checks here
+      #- name: Health check services
       #  run: |
-      #    docker push banking/config-service:${{ github.sha }}
-      #    docker push banking/discovery-service:${{ github.sha }}
-      #    …etc.
+      #    curl --fail http://localhost:8761/eureka/apps
+      #    curl --fail http://localhost:8088/actuator/health
+
+      # Docker Compose will automatically be torn down at the end of the job
