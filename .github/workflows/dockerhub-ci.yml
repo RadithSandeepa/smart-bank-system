@@ -35,7 +35,7 @@ jobs:
       - name: Build & Push API Gateway
         uses: docker/build-push-action@v4
         with:
-          context: ./api-gateway
+          context: ./_api-gateway
           push: true
           tags: ${{ env.DOCKER_USER }}/api-gateway:latest
 
