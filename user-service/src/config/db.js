@@ -1,3 +1,7 @@
+/*
+ *   Copyright (c) 2025 Radith Sandeepa
+ *   All rights reserved.
+ */
 import mongoose from "mongoose";
 
 const connectDB = async () => {
