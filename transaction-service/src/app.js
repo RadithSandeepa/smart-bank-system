@@ -7,7 +7,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
-import userRoutes from "./routes/user.route.js";
+import transactionRoutes from "./routes/transaction.routes.js";
 
 const app = express();
 
@@ -18,6 +18,6 @@ app.use(bodyParser.json());
 app.use(morgan("dev"));
 
 // Routes
-app.use("/api/users", userRoutes);
+app.use("/api/transactions", transactionRoutes);
 
 export default app;
