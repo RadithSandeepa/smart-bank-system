@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build:
+      context: ./api-gateway
+    ports:
+      - '8080:8080'
+    environment:
+      - PORT=8080
+      - USER_SERVICE_URL=http://user-service:5000
+      - ACCOUNT_SERVICE_URL=http://account-service:4003
+      - CARD_SERVICE_URL=http://card-service:4001
+      - TRANSACTION_SERVICE_URL=http://transaction-service:4002
+    depends_on:
+      - user-service
+      - account-service
+      - card-service
+      - transaction-service
+
+  account-service:
+    build:
+      context: ./account-service
+    ports:
+      - '4003:4003'
+    environment:
+      - PORT=4003
+      - NODE_ENV=production
+
+  card-service:
+    build:
+      context: ./card-service
+    ports:
+      - '4001:4001'
+    environment:
+      - PORT=4001
+      - NODE_ENV=production
+
+  transaction-service:
+    build:
+      context: ./transaction-service
+    ports:
+      - '4002:4002'
+    environment:
+      - PORT=4002
+      - NODE_ENV=production
+
+  user-service:
+    build:
+      context: ./user-service
+    ports:
+      - '5000:5000'
+    environment:
+      - PORT=5000
+      - NODE_ENV=production
