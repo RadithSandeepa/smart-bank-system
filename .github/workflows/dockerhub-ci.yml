@@ -2,9 +2,13 @@ name: Smart Bank System – CI Pipeline (Push to Docker Hub)
 
 on:
   push:
-    branches: [main]
+    branches: 
+      - main
+      - feat/rewrite
   pull_request:
-    branches: [main]
+    branches: 
+      - main
+      - feat/rewrite
 
 env:
   DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
